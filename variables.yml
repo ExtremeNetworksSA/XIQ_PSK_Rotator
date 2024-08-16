@@ -1,0 +1,58 @@
+---
+
+# The API token for XIQ - Generate a token with set expiration time. It will need to include these permissions. "ssid", "device:list", "deployment", "lro:r"
+XIQ_token: "***"
+
+# The ID of the XIQ SSID - see guide on how to get this using swagger
+SSID_ID: 0
+
+
+# allow script to run even if APs are in mismatched state - if False, email will be sent if devices are im mismatched. PSK will not be updated
+allow_mismatched: False
+
+# allow script ot push config to devices - if mis matched devices allow_mismatched would need to be True
+allow_config_push: True
+
+
+## File name for PSK_list - Full Path!
+file_name: "/Path-to-folder/psk_list.csv"
+
+
+########################################
+# EMAIL
+########################################
+
+# select type of email 
+## - gmail - uses gmail API - follow guide to configure 
+## - smtp - uses smtp - could use a smtp relay like sendgrid if local SMTP server not available https://app.sendgrid.com/ (not affiliated)
+## - disabled - no email will be used
+
+email_type: gmail  
+
+# EMAIL Variables - fill out if gmail or smtp is selected for 'email_type'
+########################################
+## list of emails to recieve psk
+email_list: 
+  - user1@example.com
+  - user2@example.com
+
+## email subject
+email_sub: New Guest PSK
+
+## email message - new psk is appended later
+email_msg: The new PSK for Guest is
+
+
+# SMTP Variables - fill out if smtp is selected for 'email_type'
+########################################
+##example username: apikey
+username: 
+##example password: SG.BlAl0tUjQT
+password: 
+##example sender_email: mike@contoso.com
+sender_email: 
+
+##example smtp_server: smtp.sendgrid.net 
+##example smtp_server: "192.168.10.4" - add quotes around IP addresses
+smtp_server: 
+smtp_port: 587  # change port as required by your SMTP server
