@@ -104,7 +104,7 @@ if len(mismatched_devices) > 0 and not yml_variables['allow_mismatched']:
     #Do this is mismatched devices and allow_mismatched is set to False
     log_msg = f"Mismatches devices were found in XIQ. Yaml settings are set to not allow mismatches. PSK will not be changed"
     logger.warning(log_msg)
-    log_msg += f"\n\nThe following APs are in a mismatched state: \n{"\n".join([d['hostname'] for d in mismatched_devices])}"
+    log_msg += f"\n\nThe following APs are in a mismatched state: \n{'chr(10)'.join([d['hostname'] for d in mismatched_devices])}"
     send_email(False, log_msg)
     print("Script is exiting...")
     raise SystemExit
@@ -113,7 +113,7 @@ if len(mismatched_devices) > 0 and not yml_variables['allow_mismatched']:
 email_body = ''
 
 new_psk = psk_list.pop(0)[0]
-print(new_psk)
+
 psk_updated = False
 response = x.change_PSK(yml_variables['SSID_ID'],new_psk)
 if response == "Success":
