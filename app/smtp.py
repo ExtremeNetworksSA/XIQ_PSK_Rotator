@@ -20,9 +20,9 @@ class new():
         self.yml_variables = yml_variables
 
 
-    def send_message(self, body):
+    def send_message(self, body, recipients):
             # Build the email
-            toHeader = ", ".join(self.yml_variables['email_list'])
+            toHeader = ", ".join(recipients)
             msg = MIMEMultipart()
             msg['Subject'] = self.yml_variables['email_sub']
             msg['From'] = self.yml_variables['smtp_sender_email']

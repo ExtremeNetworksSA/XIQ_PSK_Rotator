@@ -13,6 +13,8 @@ allow_mismatched: False
 # allow script ot push config to devices - if mis matched devices allow_mismatched would need to be True
 allow_config_push: True
 
+# allow script to add psk to bottom of list when appling it. This will make sure the list is never empty, otherwise PSKs will need to be manually added.
+reuse_psks : False
 
 ## File name for PSK_list - Full Path!
 file_name: "/Path-to-folder/psk_list.csv"
@@ -31,8 +33,12 @@ email_type: gmail
 
 # EMAIL Variables - fill out if gmail or smtp is selected for 'email_type'
 ########################################
-## list of emails to recieve psk
+## list of email addresses to recieve psk
 email_list: 
+  - user1@example.com
+  - user2@example.com
+## List of email addresses to recieve error alerts from script
+support_email_list:
   - user1@example.com
   - user2@example.com
 
@@ -52,7 +58,7 @@ password:
 ##example sender_email: mike@contoso.com
 sender_email: 
 
-##example smtp_server: smtp.sendgrid.net 
+##example smtp_server: smtp.sendgrid.net
 ##example smtp_server: "192.168.10.4" - add quotes around IP addresses
 smtp_server: 
 smtp_port: 587  # change port as required by your SMTP server

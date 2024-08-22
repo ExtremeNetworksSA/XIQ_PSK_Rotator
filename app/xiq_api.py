@@ -17,6 +17,10 @@ logger = logging.getLogger('PSK_Rotator.xiq_api')
 
 PATH = current_dir
 
+class APICallFailedException(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 class XIQ:
     def __init__(self, user_name=None, password=None, token=None):
@@ -46,28 +50,31 @@ class XIQ:
             try:
                 response = self.__get_api_call(url=url)
             except ValueError as e:
-                print(f"API to {info} failed attempt {count} of {self.totalretries} with {e}")
+                log_msg = (f"API to {info} failed attempt {count} of {self.totalretries} with {e}")
+                print(log_msg)
+                logger.warning(log_msg)
             except Exception as e:
-                print(f"API to {info} failed with {e}")
-                print('script is exiting...')
-                raise SystemExit
+                log_msg = (f"API to {info} failed with {e}")
+                logger.error(log_msg)
+                raise ValueError(log_msg)
             except:
-                print(f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                log_msg = (f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                print(log_msg)
+                logger.warning(log_msg)
             else:
                 success = 1
                 break
         if success != 1:
-            print("failed to {}. Cannot continue.".format(info))
-            print("Check log file for details")
-            print("exiting script...")
-            raise SystemExit
+            log_msg = (f"failed to {info}. Cannot continue.")
+            log_msg += (" Check log file for details")
+            logger.error(log_msg)
+            raise APICallFailedException(log_msg)
         if 'error' in response:
-            if response['error_mssage']:
-                log_msg = (f"Status Code {response['error_id']}: {response['error_message']}")
+            if response['error']['error_message']:
+                log_msg = (f"Error Code {response['error']['error_id']}: {response['error']['error_message']}")
                 logger.error(log_msg)
-                print(f"API Failed {info} with reason: {log_msg}")
-                print("Script is exiting...")
-                raise SystemExit
+                log_msg = (f"API Failed {info} with reason: {log_msg}")
+                raise APICallFailedException(log_msg)
         return response
     
     def __setup_put_api_call(self, info, url, payload):
@@ -81,27 +88,26 @@ class XIQ:
                 logger.warning(log_msg)
             except Exception as e:
                 log_msg = (f"API to {info} failed with {e}")
-                print(log_msg)
                 logger.error(log_msg)
-                print('script is exiting...')
-                raise SystemExit
+                raise ValueError(log_msg)
             except:
-                print(f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                log_msg = (f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                print(log_msg)
+                logger.warning(log_msg)
             else:
                 success = 1
                 break
         if success != 1:
-            print("failed to {}. Cannot continue.".format(info))
-            print("Check log file for details")
-            print("exiting script...")
-            raise SystemExit
+            log_msg = (f"failed to {info}. Cannot continue.")
+            log_msg += (" Check log file for details")
+            logger.error(log_msg)
+            raise APICallFailedException(log_msg)
         if 'error' in response:
-            if response['error_mssage']:
-                log_msg = (f"Status Code {response['error_id']}: {response['error_message']}")
+            if response['error']['error_message']:
+                log_msg = (f"Error Code {response['error']['error_id']}: {response['error']['error_message']}")
                 logger.error(log_msg)
-                print(f"API Failed {info} with reason: {log_msg}")
-                print("Script is exiting...")
-                raise SystemExit
+                log_msg = (f"API Failed {info} with reason: {log_msg}")
+                raise APICallFailedException(log_msg)
         return response
     
     def __setup_post_api_call(self, info, url, payload):
@@ -110,27 +116,31 @@ class XIQ:
             try:
                 response = self.__post_api_call(url=url, payload=payload)
             except ValueError as e:
-                print(f"API to {info} failed attempt {count} of {self.totalretries} with {e}")
+                log_msg = (f"API to {info} failed attempt {count} of {self.totalretries} with {e}")
+                print(log_msg)
+                logger.warning(log_msg)
             except Exception as e:
-                print(f"API to {info} failed with {e}")
-                print('script is exiting...')
-                raise SystemExit
+                log_msg = (f"API to {info} failed with {e}")
+                logger.error(log_msg)
+                raise ValueError(log_msg)
             except:
-                print(f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                log_msg = (f"API to {info} failed attempt {count} of {self.totalretries} with unknown API error")
+                print(log_msg)
+                logger.warning(log_msg)
             else:
                 success = 1
                 break
         if success != 1:
-            print("failed {}. Cannot continue.".format(info))
-            print("exiting script...")
-            raise SystemExit
+            log_msg = (f"failed to {info}. Cannot continue.")
+            log_msg += (" Check log file for details")
+            logger.error(log_msg)
+            raise APICallFailedException(log_msg)
         if 'error' in response:
-            if response['error_message']:
-                log_msg = (f"Status Code {response['error_id']}: {response['error_message']}")
+            if response['error']['error_message']:
+                log_msg = (f"Error Code {response['error']['error_id']}: {response['error']['error_message']}")
                 logger.error(log_msg)
-                print(f"API Failed {info} with reason: {log_msg}")
-                print("Script is exiting...")
-                raise SystemExit
+                log_msg = (f"API Failed {info} with reason: {log_msg}")
+                raise APICallFailedException(log_msg)
         return response
 
     def __get_api_call(self, url):
@@ -256,23 +266,29 @@ class XIQ:
 
     # PSK
     def change_PSK(self, ssid_id, psk):
-        info = "change psk"
+        info = "to change psk"
         url = f"{self.URL}/ssids/{ssid_id}/psk/password"
         payload = psk
-        response = self.__setup_put_api_call(info,url,payload)
+        try:
+            response = self.__setup_put_api_call(info,url,payload)
+        except APICallFailedException as e:
+            response = "Failed"
         return response
     
     # LRO
     def __check_LRO(self, url):
-        info = "checking LRO status"
-        response = self.__setup_get_api_call(info,url)
+        info = "to check LRO status"
+        try:
+            response = self.__setup_get_api_call(info,url)
+        except APICallFailedException as e:
+            raise APICallFailedException(e)
         return response['metadata']["status"]
         
     
     # Devices
     ## Check for config mismatches
     def collectMismatchDevices(self, pageSize=100, location_id=None):
-        info = "collecting mismatch devices" 
+        info = "to collect mismatch devices" 
         page = 1
         pageCount = 1
         firstCall = True
@@ -282,7 +298,10 @@ class XIQ:
             url = self.URL + "/devices?views=FULL&page=" + str(page) + "&limit=" + str(pageSize) + "&connected=true&configMismatch=true"
             if location_id:
                 url = url  + "&locationId=" +str(location_id)
-            rawList = self.__setup_get_api_call(info,url)
+            try:
+                rawList = self.__setup_get_api_call(info,url)
+            except APICallFailedException as e:
+                raise APICallFailedException(e)
             devices = devices + rawList['data']
 
             if firstCall == True:
@@ -292,7 +311,7 @@ class XIQ:
         return devices
     
     def collectDevices(self, pageSize=100, location_id=None):
-        info = "collecting devices" 
+        info = "to collect devices" 
         page = 1
         pageCount = 1
         firstCall = True
@@ -302,7 +321,10 @@ class XIQ:
             url = self.URL + "/devices?views=FULL&page=" + str(page) + "&limit=" + str(pageSize) + "&connected=true"
             if location_id:
                 url = url  + "&locationId=" +str(location_id)
-            rawList = self.__setup_get_api_call(info,url)
+            try:
+                rawList = self.__setup_get_api_call(info,url)
+            except APICallFailedException as e:
+                raise APICallFailedException(e)
             devices = devices + rawList['data']
 
             if firstCall == True:
@@ -312,7 +334,7 @@ class XIQ:
         return devices
 
     def configPushToDevices(self, device_id_list):
-        info = "pushing delta config update to devices"
+        info = "to push delta config update to devices"
         url = self.URL + "/deployments?async=true"
         payload = json.dumps({
         "devices": {
@@ -332,12 +354,18 @@ class XIQ:
             }
         }
         })
-        response = self.__setup_post_api_call(info,url,payload)
+        try:
+            response = self.__setup_post_api_call(info,url,payload)
+        except APICallFailedException as e:
+            raise APICallFailedException(e)
         # wait 60 seconds
         wait_time = 60
         print(f"waiting {wait_time} seconds for configuration push to start.")
         time.sleep(wait_time)
         #check LRO 
-        lro_response = self.__check_LRO(response.headers['Location'])
+        try:
+            lro_response = self.__check_LRO(response.headers['Location'])
+        except APICallFailedException as e:
+            raise APICallFailedException(e)
         return lro_response
 

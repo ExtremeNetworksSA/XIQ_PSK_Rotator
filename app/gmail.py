@@ -54,8 +54,10 @@ class new():
         message['subject'] = obj
         return {'raw': urlsafe_b64encode(message.as_bytes()).decode()}   
 
-    def send_message(self, body, attachments=[]):
+    def send_message(self, body, recipients, attachments=[]):
         return self.service.users().messages().send(
           userId="me",
-          body=self.build_message(self.yml_variables['email_list'], self.yml_variables['email_sub'], body)
+          body=self.build_message(recipients, self.yml_variables['email_sub'], body)
         ).execute()
+    
+    
