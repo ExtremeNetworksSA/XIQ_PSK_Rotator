@@ -287,38 +287,17 @@ class XIQ:
     
     # Devices
     ## Check for config mismatches
-    def collectMismatchDevices(self, pageSize=100, location_id=None):
+    def collectMismatchDevices(self, pageSize=100, location_id=None, wait_time = 0):
         info = "to collect mismatch devices" 
         page = 1
         pageCount = 1
         firstCall = True
-
+        if wait_time:
+            print(f"Waiting {wait_time} seconds before checking for mismatched devices")
+            time.sleep(wait_time)
         devices = []
         while page <= pageCount:
             url = self.URL + "/devices?views=FULL&page=" + str(page) + "&limit=" + str(pageSize) + "&connected=true&configMismatch=true"
-            if location_id:
-                url = url  + "&locationId=" +str(location_id)
-            try:
-                rawList = self.__setup_get_api_call(info,url)
-            except APICallFailedException as e:
-                raise APICallFailedException(e)
-            devices = devices + rawList['data']
-
-            if firstCall == True:
-                pageCount = rawList['total_pages']
-            print(f"completed page {page} of {rawList['total_pages']} collecting Devices")
-            page = rawList['page'] + 1 
-        return devices
-    
-    def collectDevices(self, pageSize=100, location_id=None):
-        info = "to collect devices" 
-        page = 1
-        pageCount = 1
-        firstCall = True
-
-        devices = []
-        while page <= pageCount:
-            url = self.URL + "/devices?views=FULL&page=" + str(page) + "&limit=" + str(pageSize) + "&connected=true"
             if location_id:
                 url = url  + "&locationId=" +str(location_id)
             try:

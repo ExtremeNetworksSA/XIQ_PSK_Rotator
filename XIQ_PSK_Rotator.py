@@ -128,7 +128,7 @@ if len(mismatched_devices) > 0 and not yml_variables['allow_mismatched']:
     #Do this is mismatched devices and allow_mismatched is set to False
     log_msg = f"Mismatches devices were found in XIQ. Yaml settings are set to not allow mismatches. PSK will not be changed"
     logger.warning(log_msg)
-    log_msg += f"\n\nThe following APs are in a mismatched state: \n{'chr(10)'.join([d['hostname'] for d in mismatched_devices])}"
+    log_msg += f"\n\nThe following APs are in a mismatched state: \n{chr(10).join([d['hostname'] for d in mismatched_devices])}"
     # send message to support email
     send_email(False, log_msg, yml_variables['support_email_list'])
     print("Script is exiting...")
@@ -157,7 +157,7 @@ else:
 config_status_msg = ""
 if yml_variables['allow_config_push'] and psk_updated:
     try:
-        devices = x.collectDevices()
+        devices = x.collectMismatchDevices(wait_time=60)
     except APICallFailedException as e:
         # send message to support email
         send_email(False, f"PSK has been added by script but failed to collect devices for config push.\n - {str(e)}.\nCheck logs for more details", yml_variables['support_email_list'])
@@ -176,7 +176,8 @@ if yml_variables['allow_config_push'] and psk_updated:
                 config_status_msg = f"The configuration push {config_status}"
             else:
                 config_status_msg = f"The configuration push is {config_status}"
-    config_status_msg = f"There are currently no online devices"
+    else:
+        config_status_msg = f"There are currently no online devices"
 elif not yml_variables['allow_config_push'] and psk_updated:
     config_status_msg = 'Configuration pushing is disabled in script. New PSK will be used once configuration is pushed.'
 
