@@ -7,8 +7,8 @@
 #// -------------------------------------------------------------------------------------
 # written by:   Tim Smith
 # e-mail:       tismith@extremenetworks.com
-# date:         16 Aug 2024
-# version:      1.0.1
+# date:         4 May 2026
+# version:      1.1.1
 #
 #
 # History:
@@ -17,6 +17,7 @@
 #    --------    --------    ------------------------------------------------------------
 #    tismith     08/22/24    -   added support email
 #                            -   added APICallFailedException for XIQ errors
+#    tismith     05/04/26    -   updated deployment payload to match latest XIQ API changes
 #########################################################################################
 
 import logging
